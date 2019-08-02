@@ -1,8 +1,3 @@
-#an attempt at making a hangman game in my last 3 days at adtran!
-#QUESTIONS
-    #categories? or just words???
-    #irc?
-    #name the hangman?
 import random
 
 
@@ -40,17 +35,17 @@ class hangman(irc.IRCClient):
     wordWorking = "" #contains the dashes and is diplayed and updated as the user guesses
     wordLength = 0
     usedChars = "" #guessed characters
-    hangmanEmpty = "   ____\n  |    |\n  |\n  |\n  |\n  |\n__|__"
-    hangman1 = "   ____\n  |    |\n  |   ( )\n  |\n  |\n  |\n__|__"
-    hangman2 = "   ____\n  |    |\n  |   ( )\n  |    |\n  |\n  |\n__|__"
-    hangman3 = "   ____\n  |    |\n  |   ( )\n  |   \|\n  |\n  |\n__|__"
-    hangman4 = "   ____\n  |    |\n  |   ( )\n  |  '\|\n  |\n  |\n__|__"
-    hangman5 = "   ____\n  |    |\n  |   ( )\n  |  '\|/\n  |\n  |\n__|__"
-    hangman6 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |\n  |\n__|__"
-    hangman7 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |   /\n  |\n__|__"
-    hangman8 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |  _/\n  |\n__|__"
-    hangman9 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |  _/ \\\n  |\n__|__"
-    hangman10 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |  _/ \\_\n  |\n__|__"
+    hangmanEmpty = "   ____\n  |    |\n  |\n  |\n  |\n__|__"
+    hangman1 = "   ____\n  |    |\n  |   ( )\n  |\n  |\n__|__"
+    hangman2 = "   ____\n  |    |\n  |   ( )\n  |    |\n  |\n__|__"
+    hangman3 = "   ____\n  |    |\n  |   ( )\n  |   \|\n  |\n__|__"
+    hangman4 = "   ____\n  |    |\n  |   ( )\n  |  '\|\n  |\n__|__"
+    hangman5 = "   ____\n  |    |\n  |   ( )\n  |  '\|/\n  |\n__|__"
+    hangman6 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |\n__|__"
+    hangman7 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |   /\n__|__"
+    hangman8 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |  _/\n__|__"
+    hangman9 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |  _/ \\\n__|__"
+    hangman10 = "   ____\n  |    |\n  |   ( )\n  |  '\|/'\n  |  _/ \\_\n__|__"
     
     allowedWrongGuesses = 10 
     wrongGuesses = 0
@@ -74,8 +69,6 @@ class hangman(irc.IRCClient):
         usr["nick"] = nargs[1][5]
         usr["host"] = nargs[1][2]
         usr["ip"] = nargs[1][3]
-        # for (key, value) in usr:
-        #     usr[key] = [(value)]
         if (usr["ip"] == self.owner):
                self.owner_name = usr["nick"]
         self.user_list.append(usr)
@@ -96,7 +89,12 @@ class hangman(irc.IRCClient):
         user_name = []
         for name in self.user_list: user_name.append(name["nick"])
 
-        if search(r'(^|\s)+play *(\s|$)+', message, IGNORECASE):
+        if (search(r'(^|\s)+help *(\s|$)+', message, IGNORECASE)):
+            self.currentTime = time.time()
+            self.msg(self.channel, "Hi! I am a little hangman game made by Ashleigh. Enter a character when I ask and try to solve the word before DEATH. To start, enter \"play\"")
+        
+
+        if (message == "play"):
             self.wrongGuesses = 0
             self.rightGuesses = 0
             self.wordRemoving = ""
@@ -106,7 +104,6 @@ class hangman(irc.IRCClient):
             self.currentTime = time.time()
             self.msg(self.channel, "starting game")
             self.gameRunning = True
-            #self.openingMessage()
             self.pickWord()
             print (self.word)
             self.generateString()
@@ -118,13 +115,6 @@ class hangman(irc.IRCClient):
             if(not self.checkAlreadyUsed(message)):
                 self.checkInput(message)
             return
-
-    #display opening message function
-    def openingMessage(self):
-        self.currentTime = time.time()
-        self.msg(self.channel, "\n\nHello! Welcome to Hangman. Preparing man to be hung...\nDone!\n\nPreparing word...\nDone!")
-        
-        self.msg(self.channel, "\nHope you're ready, here we go! Enter any input to continue...\n\n")
         
     #pick word function
     def pickWord(self):
@@ -133,6 +123,7 @@ class hangman(irc.IRCClient):
         myline =random.choice(lines)
         self.word = myline
         self.wordRemoving = self.word
+
     #generate array of underscores function
     def generateString(self):
         self.currentTime = time.time()
@@ -154,7 +145,6 @@ class hangman(irc.IRCClient):
         
     #check if input is in word
     def checkInput(self, userInput):
-        #global allowedWrongGuesses
         print("WordRemoving = " + self.wordRemoving)
         inputValid = userInput in self.wordRemoving
         if(self.wrongGuesses == 0 and self.rightGuesses == 0):
@@ -262,7 +252,9 @@ class hangman(irc.IRCClient):
         self.continuePlaying = False
         self.gameRunning = False
         self.currentTime = time.time()
-        self.msg(self.channel, "`~`~` Congrats!!!! You got the winning word: " + word + "!!!!`~`~`")
+        self.msg(self.channel, "`~`~` Congrats!!!! You got the winning word: " + self.word + "!!!!`~`~`")
+        self.msg(self.channel, "To reset and play again, enter \"play\"!")
+        
     
     #user gave incorrect input, edit hangman and incorrect guesses
     def incorrectInput(self, userInput):
@@ -270,11 +262,10 @@ class hangman(irc.IRCClient):
         self.wrongGuesses = self.wrongGuesses + 1
         if(remaining > 0):
             self.currentTime = time.time()
-            self.msg(self.channel, "Wrong >:( Your guess " + userInput + " is not in the word.\nMr. Hangman gets another body part.\n")
+            self.msg(self.channel, "Wrong >:( Your guess " + userInput + " is not in the word. Mr. Hangman gets another body part.\n")
             if(remaining <= 4):
                 self.currentTime = time.time()
                 self.msg(self.channel, "Warning!!! Only " + str(remaining) + " wrong guesses remaining!")
-                return
             self.showGame()
         else:
             self.theyLose()
@@ -285,8 +276,9 @@ class hangman(irc.IRCClient):
         self.continuePlaying = False
         self.gameRunning = False
         self.currentTime = time.time()
-        self.msg(self.channel, "\n\nboi you dun goofed and hangman is ded. Winning word was: " + word)
-        
+        self.msg(self.channel, "\n\nboi you dun goofed and hangman is ded. Winning word was: " + self.word)
+        self.msg(self.channel, "To reset and play again, enter \"play\"!")
+
         
     #play again?
     def playAgain(self, message):
