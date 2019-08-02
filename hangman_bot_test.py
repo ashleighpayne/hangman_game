@@ -18,8 +18,8 @@ serv_port = 6667
 
 class hangman(irc.IRCClient):
 
-    nickname = "hangman"
-    channel = "#hangman"
+    nickname = "hangman_teset"
+    channel = "#hangmantest"
     owner = 'tarp-coop-ubuntu.adtran.com'
     owner_name = ""
     currentTime = 0
@@ -52,6 +52,7 @@ class hangman(irc.IRCClient):
     rightGuesses = 0
     continuePlaying = True
     gameRunning = False
+    nextUser = 0
 
     def signedOn(self):
         self.join(self.channel)
@@ -101,8 +102,10 @@ class hangman(irc.IRCClient):
             self.word = ""
             self.wordWorking = ""
             self.usedChars = ""
+            self.nextUser = 0
             self.currentTime = time.time()
             self.msg(self.channel, "starting game")
+            self.msg(self.channel, nick + ": you start")
             self.gameRunning = True
             self.pickWord()
             print (self.word)
@@ -110,7 +113,10 @@ class hangman(irc.IRCClient):
             self.showGame()
             return
         
-        picked = random.choice(self.user_list)
+        picked = self.user_list[self.nextUser]
+        if ("hangman_tese" in picked):
+            picked = self.user_list[self.nextUser + 1]
+        self.nextUser = self.nextUser + 1
 
         if(len(message) == 1):
             print(message)
@@ -223,6 +229,8 @@ class hangman(irc.IRCClient):
             self.msg(self.channel, self.hangman10)
             self.msg(self.channel, "Characters used: " + self.usedChars)
             self.msg(self.channel, self.wordWorking)
+
+
 
         self.currentTime = time.time()
         self.msg(self.channel, "Enter a character:")
